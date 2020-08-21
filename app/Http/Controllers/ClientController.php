@@ -1,11 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Client;
 use Illuminate\Http\Request;
+
 
 class ClientController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,9 @@ class ClientController extends Controller
     public function getAll()
     {
         //
-        return view('client.list');
+        $liste_clients = Client::paginate(2);
+        //$liste_clients = Client::all();
+        return view('client.list',['liste_clients' =>$liste_clients]);
     }
 
     /**
@@ -33,7 +42,7 @@ class ClientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function add(Request $request)
+    public function add()
     {
         //
         return view('client.add');
@@ -59,7 +68,8 @@ class ClientController extends Controller
     public function edit($id)
     {
         //
-        return view('client.edit');
+        $client = Client::find($id);
+        return view('client.edit' ,  ['client' =>$client]);
     }
 
     /**
@@ -69,10 +79,19 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
-        return $this->getAll();
+        $client = Client::find($request->id);
+        $client->nom = $request->nom;
+        $client->prenom = $request->prenom;
+        $client->telephone = $request->telephone;
+        $client->email = $request->email;
+        $client->cni = $request->cni;
+        $result = $client->save();
+
+        return redirect('/client/getAll');
+        //return $this->getAll();
     }
 
     /**
@@ -84,6 +103,28 @@ class ClientController extends Controller
     public function delete($id)
     {
         //
+        $client = Client::find($id);
+        if($client!=null)
+        { 
+            $client->delete();
+        }
         return $this->getAll();
+    }
+
+    public function persist(Request $request)
+    {
+        //
+        //echo $request->nom;
+        //return $this->add();
+        $client = new Client();
+        $client->nom = $request->nom;
+        $client->prenom = $request->prenom;
+        $client->telephone = $request->telephone;
+        $client->email = $request->email;
+        $client->cni = $request->cni;
+        $result = $client->save();
+        //echo $result;
+        //return $this->add();
+        return view('client.add',  ['confirmation' =>$result]);
     }
 }

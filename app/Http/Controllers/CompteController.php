@@ -1,11 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Compte;
+use App\Client;
+use App\User;
+use  Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class CompteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +22,9 @@ class CompteController extends Controller
     public function getAll()
     {
         //
-        return view('compte.list');
+        //$liste_comptes = Compte::paginate(2);
+        $liste_comptes = Compte::all();
+        return view('compte.list',['liste_comptes' =>$liste_comptes]);
     }
 
     /**
@@ -33,10 +43,11 @@ class CompteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function add(Request $request)
+    public function add()
     {
         //
-        return view('compte.add');
+        $clients = Client::all();
+        return view('compte.add', ['clients' =>$clients]);
     }
 
     /**
@@ -59,7 +70,8 @@ class CompteController extends Controller
     public function edit($id)
     {
         //
-        return view('compte.edit');
+        $compte = Compte::find($id);
+        return view('compte.edit' ,  ['compte' =>$compte]);
     }
 
     /**
@@ -69,10 +81,19 @@ class CompteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
-        return $this->getAll();
+       
+        $compte = Compte::find($request->id);
+        $compte->numcompte = $request->numcompte;
+        $compte->numagence = $request->numagence;
+        $compte->typecompte = $request->typecompte;
+        $compte->clients_id = $request->clients_id;
+        $compte->users_id = $request->Auth::id();
+        $result = $compte->save();
+
+        return redirect('/compte/getAll');
+        //return $this->getAll();
     }
 
     /**
@@ -84,6 +105,28 @@ class CompteController extends Controller
     public function delete($id)
     {
         //
+        $compte = Compte::find($id);
+        if($compte!=null)
+        { 
+            $compte->delete();
+        }
         return $this->getAll();
+    }
+
+    public function persist(Request $request)
+    {
+        //
+        //echo $request->nom;
+        //return $this->add();
+        $compte = new Compte();
+        $compte->numcompte = $request->numcompte;
+        $compte->numagence = $request->numagence;
+        $compte->typecompte = $request->typecompte;
+        $compte->clients_id = $request->clients_id;
+        $compte->users_id = Auth::id();
+        $result = $compte->save();
+        //echo $result;
+        return $this->add();
+        //return view('compte.add',  ['confirmation' =>$result]);
     }
 }

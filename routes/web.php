@@ -28,12 +28,14 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/client/add', 'ClientController@add')->name('addclient');
 Route::get('/client/getAll', 'ClientController@getAll')->name('getallclient');
 Route::get('/client/edit/{id}', 'ClientController@edit')->name('editclient');
-Route::get('/client/update', 'ClientController@update')->name('updateclient');
+Route::post('/client/update', 'ClientController@update')->name('updateclient');
 Route::get('/client/delete/{id}', 'ClientController@delete')->name('deleteclient');
+Route::post('/client/persist', 'ClientController@persist')->name('persistclient');
 
 //Routes pour compte
 Route::get('/compte/add', 'CompteController@add')->name('addcompte');
 Route::get('/compte/getAll', 'CompteController@getAll')->name('getallcompte');
 Route::get('/compte/edit/{id}', 'CompteController@edit')->name('editcompte');
-Route::get('/compte/update', 'CompteController@update')->name('updatecompte');
+Route::post('/compte/update', 'CompteController@update')->name('updatecompte');
 Route::get('/compte/delete/{id}', 'CompteController@delete')->name('deletecompte');
+Route::post('/compte/persist', 'CompteController@persist')->name('persistcompte');
