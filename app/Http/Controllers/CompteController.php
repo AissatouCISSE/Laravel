@@ -89,7 +89,7 @@ class CompteController extends Controller
         $compte->numagence = $request->numagence;
         $compte->typecompte = $request->typecompte;
         $compte->clients_id = $request->clients_id;
-        $compte->users_id = $request->Auth::id();
+        $compte->users_id = Auth::id();
         $result = $compte->save();
 
         return redirect('/compte/getAll');
